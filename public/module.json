@@ -1,12 +1,12 @@
 {
-    "id": "fvtt-module-template",
+    "id": "ose-combat-tracker",
     "version": "11.0.0",
     "compatibility": {
         "minimum": "11",
         "verified": "11",
         "maximum": "11"
     },
-    "title": "fvtt-module-template",
+    "title": "ose-combat-tracker",
     "description": "A Foundry VTT module template",
     "languages": [
         {
@@ -15,8 +15,23 @@
             "path": "lang/en.json"
         }
     ],
-    "url": "https://github.com/patrickporto/fvtt-module-template",
+    "url": "https://github.com/patrickporto/ose-combat-tracker",
+    "relationships": {
+        "requires": [
+            {
+                "id": "petitevue-lib",
+                "type": "module",
+                "manifest": "https://github.com/patrickporto/petitevue-lib/releases/download/11.0.0/module.json",
+                "compatibility": {
+                    "verified": "11.0.0"
+                }
+            }
+        ]
+    },
     "esmodules": [
-        "fvtt-module-template.js"
+        "ose-combat-tracker.js"
+    ],
+    "styles": [
+        "ose-combat-tracker.css"
     ]
 }
