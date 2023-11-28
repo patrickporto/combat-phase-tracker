@@ -47,7 +47,7 @@
 
     <ol id="combat-tracker" class="directory-list">
         {{#each turns as | phase |}}
-        <li class="directory-item phase" data-phase-id="{{phase.id}}" :class="currentPhase.id === '{{phase.id}}' && 'active'" @click="selectPhase('{{phase.id}}')">
+        <li class="directory-item phase" data-phase-id="{{phase.id}}" :class="currentPhase.id === '{{phase.id}}' && 'active'" @click="currentPhase.id !== '{{phase.id}}' && selectPhase('{{phase.id}}')">
             <div class="phase-name document-name flexrow">
                 {{phase.name}}
             </div>
