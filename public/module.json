@@ -6,8 +6,8 @@
         "verified": "11",
         "maximum": "11"
     },
-    "title": "ose-combat-tracker",
-    "description": "A Foundry VTT module template",
+    "title": "Old School Essentials Combat Tracker",
+    "description": "A combat tracker for Old School Essentials",
     "languages": [
         {
             "lang": "en",
