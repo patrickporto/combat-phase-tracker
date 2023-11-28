@@ -2,9 +2,11 @@ import { OSECombatTracker } from "./combat-tracker.js";
 import { CANONICAL_NAME } from "./constants.js";
 import "./ose-combat-tracker.css";
 import { combatTrackerPhases } from "./phases.js";
+import { phaseEvents } from "./phase-events.js";
 
 const api = {
-    combatTrackerPhases
+    combatTrackerPhases,
+    phaseEvents,
 }
 
 Hooks.on('init', async () => {
@@ -21,7 +23,7 @@ Hooks.on('setup', async () => {
 });
 
 
-Hooks.on(`${CANONICAL_NAME}.setup`, async ({ combatTrackerPhases }) => {
+Hooks.on(`${CANONICAL_NAME}.setup`, async ({ combatTrackerPhases, phaseEvents }) => {
     combatTrackerPhases.add({
         name: game.i18n.localize('OSECOMBATTRACKER.DeclareSpellsAndRetreats'),
         cssClass: 'ose-declare-spells-and-retreats',
@@ -45,5 +47,9 @@ Hooks.on(`${CANONICAL_NAME}.setup`, async ({ combatTrackerPhases }) => {
     combatTrackerPhases.add({
         name: game.i18n.localize('OSECOMBATTRACKER.MeleeAttacks'),
         cssClass: 'ose-melee-attacks',
+    })
+
+    phaseEvents.on('changePhase', (phase) => {
+        console.log('changePhase', phase)
     })
 });

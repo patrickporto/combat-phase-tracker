@@ -1,5 +1,6 @@
 import { TEMPLATE_PATH } from "./constants";
 import { combatTrackerPhases } from "./phases";
+import { phaseEvents } from "./phase-events";
 
 export class OSECombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -62,8 +63,34 @@ export class OSECombatTracker extends CombatTracker {
                     }
                 }
             },
+            updateCombatants(combatants) {
+                this.combatants = {}
+                for (const combatant of combatants) {
+                    this.combatants[combatant.id] = {
+                        id: combatant.id,
+                        name: combatant.name,
+                        owner: combatant.owner,
+                        defeated: combatant.defeated,
+                        hidden: combatant.hidden,
+                        canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS")
+                    }
+                }
+            },
+            get phaseApi() {
+                return {
+                    updateCombatants: this.updateCombatants,
+                    combat,
+                }
+            },
+            changePhase(newPhase) {
+                this.selectedPhase = newPhase
+                phaseEvents.call(`changePhase`, {
+                    ...this.phaseApi,
+                    phase: newPhase,
+                })
+            },
             selectPhase(phaseId) {
-                this.selectedPhase = this.phases.find(p => p.id === phaseId)
+                this.changePhase(this.phases.find(p => p.id === phaseId))
             },
             nextPhase() {
                 if (this.currentPhaseIndex + 1 > this.phases.length - 1) {
@@ -71,7 +98,7 @@ export class OSECombatTracker extends CombatTracker {
                     combat.nextRound()
                     return
                 }
-                this.selectedPhase = this.phases[this.currentPhaseIndex + 1]
+                this.changePhase(this.phases[this.currentPhaseIndex + 1])
             },
             previousPhase() {
                 if (this.currentPhaseIndex - 1 < 0) {
@@ -79,7 +106,7 @@ export class OSECombatTracker extends CombatTracker {
                     this.selectedPhase = this.phases[this.phases.length - 1]
                     return
                 }
-                this.selectedPhase = this.phases[this.currentPhaseIndex - 1]
+                this.changePhase(this.phases[this.currentPhaseIndex - 1])
             },
             toggleHidden(combatantId) {
                 const combatant = combat.combatants.get(combatantId)
