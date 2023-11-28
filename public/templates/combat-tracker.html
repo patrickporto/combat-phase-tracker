@@ -59,7 +59,7 @@
                         {{subphase.name}}
                     </div>
                     <ol id="combatants" class="subdirectory" v-if="currentSubPhase.id === '{{subphase.id}}'">
-                        {{#each phase.combatants as | combatant |}}
+                        {{#each @root.combatants as | combatant |}}
                             {{> combatant combatant=combatant}}
                         {{/each}}
                     </ol>
@@ -68,7 +68,7 @@
             </ol>
             {{else}}
             <ol id="combatants" class="subdirectory" v-if="currentPhase.id === '{{phase.id}}'">
-                {{#each phase.combatants as | combatant |}}
+                {{#each @root.combatants as | combatant |}}
                     {{> combatant combatant=combatant}}
                 {{/each}}
             </ol>
