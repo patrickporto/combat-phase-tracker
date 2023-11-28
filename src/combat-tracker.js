@@ -39,12 +39,17 @@ export class OSECombatTracker extends CombatTracker {
         const combatTracker = this
         const combat = combatTracker.viewed
 
+        const phases = Object.values(combatTrackerPhases.phases)
+
         return {
             $delimiters: ['[[', ']]'],
             combat,
-            phaseId: 0,
+            selectedPhase: phases[0],
             combatants: {},
-            phases: this._phases,
+            phases: phases,
+            get currentPhaseIndex() {
+                return this.phases.findIndex(p => p.id === this.selectedPhase.id)
+            },
             mount() {
                 for (const combatant of combat?.combatants ?? []) {
                     this.combatants[combatant.id] = {
@@ -57,22 +62,24 @@ export class OSECombatTracker extends CombatTracker {
                     }
                 }
             },
-            selectPhase(phaseIndex) {
-                this.phaseId = phaseIndex
+            selectPhase(phaseId) {
+                this.selectedPhase = this.phases.find(p => p.id === phaseId)
             },
             nextPhase() {
-                this.phaseId++
-                if (this.phaseId > this.phases.length - 1) {
-                    this.phaseId = 0
+                if (this.currentPhaseIndex + 1 > this.phases.length - 1) {
+                    this.selectedPhase = this.phases[0]
                     combat.nextRound()
+                    return
                 }
+                this.selectedPhase = this.phases[this.currentPhaseIndex + 1]
             },
             previousPhase() {
-                this.phaseId--
-                if (this.phaseId < 0) {
+                if (this.currentPhaseIndex - 1 < 0) {
                     combat.previousRound()
-                    this.phaseId = this.phases.length - 1
+                    this.selectedPhase = this.phases[this.phases.length - 1]
+                    return
                 }
+                this.selectedPhase = this.phases[this.currentPhaseIndex - 1]
             },
             toggleHidden(combatantId) {
                 const combatant = combat.combatants.get(combatantId)

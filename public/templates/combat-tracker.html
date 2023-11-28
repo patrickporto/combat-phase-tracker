@@ -51,11 +51,11 @@
 
     <ol id="combat-tracker" class="directory-list">
         {{#each turns}}
-        <li class="directory-item" data-phase-id="{{this.phaseId}}" :class="phaseId === '{{this.id}}' && 'active'" @click="selectPhase('{{this.id}}')">
+        <li class="directory-item" data-phase-id="{{this.selectedPhase.id}}" :class="selectedPhase.id === '{{this.id}}' && 'active'" @click="selectPhase('{{this.id}}')">
             <div class="phase-name document-name flexrow">
                 {{this.name}}
             </div>
-            <ol id="combatants" class="subdirectory" v-if="phaseId === '{{this.id}}'">
+            <ol id="combatants" class="subdirectory" v-if="selectedPhase.id === '{{this.id}}'">
                 {{#each @root.combatants}}
                 <li class="combatant actor directory-item flexrow"  :class="{hidden: combatants['{{this.id}}']?.hidden , defeated: combatants['{{this.id}}']?.defeated}">
                     <img class="token-image flexcol" src="{{this.img}}" alt="{{this.name}}"/>
