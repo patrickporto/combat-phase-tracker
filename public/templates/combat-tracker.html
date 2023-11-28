@@ -52,7 +52,7 @@
     <ol id="combat-tracker" class="directory-list">
         {{#each turns}}
         <li class="directory-item" data-sequence-id="{{this.sequenceId}}" :class="sequenceId === {{this.sequenceId}} && 'active'" @click="selectSequence({{this.sequenceId}})">
-            <div class="token-name flexrow">
+            <div class="phase-name document-name flexrow">
                 {{this.name}}
             </div>
             <ol id="combatants" class="subdirectory" v-if="sequenceId === {{this.sequenceId}}">
