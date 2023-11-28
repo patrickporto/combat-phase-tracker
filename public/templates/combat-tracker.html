@@ -46,41 +46,33 @@
     </header>
 
     <ol id="combat-tracker" class="directory-list">
-        {{#each turns}}
-        <li class="directory-item" data-phase-id="{{this.selectedPhase.id}}" :class="selectedPhase.id === '{{this.id}}' && 'active'" @click="selectPhase('{{this.id}}')">
+        {{#each turns as | phase |}}
+        <li class="directory-item phase" data-phase-id="{{phase.id}}" :class="currentPhase.id === '{{phase.id}}' && 'active'" @click="selectPhase('{{phase.id}}')">
             <div class="phase-name document-name flexrow">
-                {{this.name}}
+                {{phase.name}}
             </div>
-            <ol id="combatants" class="subdirectory" v-if="selectedPhase.id === '{{this.id}}'">
-                {{#each @root.combatants}}
-                <li class="combatant actor directory-item flexrow"  :class="{hidden: combatants['{{this.id}}']?.hidden , defeated: combatants['{{this.id}}']?.defeated}">
-                    <img class="token-image flexcol" src="{{this.img}}" alt="{{this.name}}"/>
-                    <div class="token-name flexcol">
-                        <h4>{{this.name}}</h4>
-                        <div class="combatant-controls flexrow">
-                            {{#if @root.user.isGM}}
-                            <a class="combatant-control" :class="combatants['{{this.id}}']?.hidden && 'active'" data-tooltip="COMBAT.ToggleVis" @click="toggleHidden('{{this.id}}')">
-                                <i class="fas fa-eye-slash"></i>
-                            </a>
-                            <a class="combatant-control" :class="combatants['{{this.id}}']?.defeated && 'active'" data-tooltip="COMBAT.ToggleDead" @click="toggleDefeated('{{this.id}}')">
-                                <i class="fas fa-skull"></i>
-                            </a>
-                            {{/if}}
-                            {{#if this.canPing}}
-                            <a class="combatant-control" data-tooltip="COMBAT.PingCombatant" @click="pingCombatant('{{this.id}}')">
-                                <i class="fa-solid fa-bullseye-arrow"></i>
-                            </a>
-                            {{/if}}
-                            <div class="token-effects">
-                                {{#each this.effects}}
-                                <img class="token-effect" src="{{this}}"/>
-                                {{/each}}
-                            </div>
-                        </div>
+            {{#if phase.subPhases}}
+            <ol class="subdirectory subphases" v-if="currentPhase.id === '{{phase.id}}'">
+                {{#each phase.subPhases as | subphase |}}
+                <li class="directory-item subphase" data-subphase-id="{{subphase.id}}" :class="currentSubPhase.id === '{{subphase.id}}' && 'active'" @click="selectSubPhase('{{subphase.id}}')">
+                    <div class="phase-name document-name flexrow">
+                        {{subphase.name}}
                     </div>
+                    <ol id="combatants" class="subdirectory" v-if="currentSubPhase.id === '{{subphase.id}}'">
+                        {{#each phase.combatants as | combatant |}}
+                            {{> combatant combatant=combatant}}
+                        {{/each}}
+                    </ol>
                 </li>
                 {{/each}}
             </ol>
+            {{else}}
+            <ol id="combatants" class="subdirectory" v-if="currentPhase.id === '{{phase.id}}'">
+                {{#each phase.combatants as | combatant |}}
+                    {{> combatant combatant=combatant}}
+                {{/each}}
+            </ol>
+            {{/if}}
         </li>
         {{/each}}
     </ol>
@@ -90,17 +82,17 @@
         {{#if user.isGM}}
             {{#if round}}
             <a class="combat-control" data-tooltip="COMBAT.RoundPrev" data-control="previousRound"><i class="fas fa-step-backward"></i></a>
-            <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousPhase"><i class="fas fa-arrow-left"></i></a>
+            <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousSubPhase"><i class="fas fa-arrow-left"></i></a>
             <a class="combat-control center" data-control="endCombat">{{localize 'COMBAT.End'}}</a>
-            <a class="combat-control" data-tooltip="COMBAT.TurnNext" @click="nextPhase"><i class="fas fa-arrow-right"></i></a>
+            <a class="combat-control" data-tooltip="COMBAT.TurnNext" @click="nextSubPhase"><i class="fas fa-arrow-right"></i></a>
             <a class="combat-control" data-tooltip="COMBAT.RoundNext" data-control="nextRound"><i class="fas fa-step-forward"></i></a>
             {{else}}
             <a class="combat-control center" data-control="startCombat">{{localize 'COMBAT.Begin'}}</a>
             {{/if}}
         {{else if control}}
-        <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousPhase"><i class="fas fa-arrow-left"></i></a>
-        <a class="combat-control center"  @click="nextPhase">{{localize 'COMBAT.TurnEnd'}}</a>
-        <a class="combat-control" data-tooltip="COMBAT.TurnNext"  @click="nextPhase"><i class="fas fa-arrow-right"></i></a>
+        <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousSubPhase"><i class="fas fa-arrow-left"></i></a>
+        <a class="combat-control center"  @click="nextSubPhase">{{localize 'COMBAT.TurnEnd'}}</a>
+        <a class="combat-control" data-tooltip="COMBAT.TurnNext"  @click="nextSubPhase"><i class="fas fa-arrow-right"></i></a>
         {{/if}}
     {{/if}}
     </nav>

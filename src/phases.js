@@ -5,9 +5,17 @@ class CombatTrackerPhases {
 
     add(phase) {
         const id = foundry.utils.randomID()
+        const subPhases = phase.subPhases?.map(subPhase => {
+            const subPhaseId = foundry.utils.randomID()
+            return {
+                id: subPhaseId,
+                ...subPhase
+            }
+        })
         this._phases[id] = {
+            ...phase,
             id,
-            ...phase
+            subPhases,
         };
     }
 

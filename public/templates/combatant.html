@@ -1,0 +1,26 @@
+<li class="combatant actor directory-item flexrow"  :class="{hidden: combatants['{{combatant.id}}']?.hidden , defeated: combatants['{{combatant.id}}']?.defeated}">
+    <img class="token-image flexcol" src="{{combatant.img}}" alt="{{combatant.name}}"/>
+    <div class="token-name flexcol">
+        <h4>{{combatant.name}}</h4>
+        <div class="combatant-controls flexrow">
+            {{#if @root.user.isGM}}
+            <a class="combatant-control" :class="combatants['{{combatant.id}}']?.hidden && 'active'" data-tooltip="COMBAT.ToggleVis" @click="toggleHidden('{{combatant.id}}')">
+                <i class="fas fa-eye-slash"></i>
+            </a>
+            <a class="combatant-control" :class="combatants['{{combatant.id}}']?.defeated && 'active'" data-tooltip="COMBAT.ToggleDead" @click="toggleDefeated('{{combatant.id}}')">
+                <i class="fas fa-skull"></i>
+            </a>
+            {{/if}}
+            {{#if combatant.canPing}}
+            <a class="combatant-control" data-tooltip="COMBAT.PingCombatant" @click="pingCombatant('{{combatant.id}}')">
+                <i class="fa-solid fa-bullseye-arrow"></i>
+            </a>
+            {{/if}}
+            <div class="token-effects">
+                {{#each combatant.effects}}
+                <img class="token-effect" src="{{combatant}}"/>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</li>

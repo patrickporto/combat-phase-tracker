@@ -45,11 +45,18 @@ export class OSECombatTracker extends CombatTracker {
         return {
             $delimiters: ['[[', ']]'],
             combat,
-            selectedPhase: phases[0],
+            currentPhase: phases[0],
+            currentSubPhase: {},
             combatants: {},
             phases: phases,
             get currentPhaseIndex() {
-                return this.phases.findIndex(p => p.id === this.selectedPhase.id)
+                return this.phases.findIndex(p => p.id === this.currentPhase.id)
+            },
+            get currentSubPhases() {
+                return Object.values(this.currentPhase?.subPhases ?? [])
+            },
+            get currentSubPhaseIndex() {
+                return this.currentSubPhases.findIndex(p => p.id === this.currentSubPhase.id)
             },
             mount() {
                 for (const combatant of combat?.combatants ?? []) {
@@ -83,30 +90,74 @@ export class OSECombatTracker extends CombatTracker {
                 }
             },
             changePhase(newPhase) {
-                this.selectedPhase = newPhase
+                this.currentPhase = newPhase
                 phaseEvents.call(`changePhase`, {
                     ...this.phaseApi,
                     phase: newPhase,
+                    currentSubPhase: this.currentSubPhase,
+                })
+            },
+            changeSubPhase(newSubPhase) {
+                if (!newSubPhase) {
+                    this.currentSubPhase = {}
+                    return
+                }
+                this.currentSubPhase = newSubPhase
+                phaseEvents.call(`changeSubPhase`, {
+                    ...this.phaseApi,
+                    phase: this.currentPhase,
+                    currentSubPhase: newSubPhase,
                 })
             },
             selectPhase(phaseId) {
-                this.changePhase(this.phases.find(p => p.id === phaseId))
+                const selectedPhase = this.phases.find(p => p.id === phaseId)
+                this.changeSubPhase(selectedPhase?.subPhases?.[0])
+                this.changePhase(selectedPhase)
+            },
+            selectSubPhase(subPhaseId) {
+                this.changeSubPhase(this.currentSubPhases.find(p => p.id === subPhaseId))
+            },
+            nextSubPhase() {
+                if (!this.currentSubPhases.length || this.currentSubPhaseIndex + 1 > this.currentSubPhases.length - 1) {
+                    this.nextPhase()
+                    return
+                }
+                const nextSubPhase = this.currentSubPhases[this.currentSubPhaseIndex + 1]
+                this.changeSubPhase(nextSubPhase)
+            },
+            previousSubPhase() {
+                if (!this.currentSubPhases.length || this.currentSubPhaseIndex - 1 < 0) {
+                    this.previousPhase()
+                    return
+                }
+                const previousSubPhase = this.currentSubPhases?.[this.currentSubPhaseIndex - 1]
+                this.changeSubPhase(previousSubPhase)
             },
             nextPhase() {
                 if (this.currentPhaseIndex + 1 > this.phases.length - 1) {
-                    this.selectedPhase = this.phases[0]
                     combat.nextRound()
+                    const nextPhase = this.phases[0]
+                    this.changeSubPhase(Object.values(nextPhase.subPhases || [])[0])
+                    this.changePhase(nextPhase)
                     return
                 }
-                this.changePhase(this.phases[this.currentPhaseIndex + 1])
+                const nextPhase = this.phases[this.currentPhaseIndex + 1]
+                this.changeSubPhase(Object.values(nextPhase.subPhases || [])[0])
+                this.changePhase(nextPhase)
             },
             previousPhase() {
                 if (this.currentPhaseIndex - 1 < 0) {
                     combat.previousRound()
-                    this.selectedPhase = this.phases[this.phases.length - 1]
+                    const previousPhase = this.phases[this.phases.length - 1]
+                    const previousSubPhases = Object.values(previousPhase.subPhases || [])
+                    this.changeSubPhase(Object.values(previousSubPhases || [])?.[previousSubPhases.length - 1])
+                    this.changePhase(previousPhase)
                     return
                 }
-                this.changePhase(this.phases[this.currentPhaseIndex - 1])
+                const previousPhase = this.phases[this.currentPhaseIndex - 1]
+                const previousSubPhases = Object.values(previousPhase.subPhases || [])
+                this.changeSubPhase(Object.values(previousSubPhases || [])?.[previousSubPhases.length - 1])
+                this.changePhase(previousPhase)
             },
             toggleHidden(combatantId) {
                 const combatant = combat.combatants.get(combatantId)
