@@ -1,4 +1,5 @@
 import { TEMPLATE_PATH } from "./constants";
+import { combatTrackerPhases } from "./phases";
 
 export class OSECombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -13,39 +14,7 @@ export class OSECombatTracker extends CombatTracker {
 
     async getData(options = {}) {
         const data = await super.getData(options);
-        const sequence = [
-            {
-                sequenceId: 0,
-                name: game.i18n.localize('OSECOMBATTRACKER.DeclareSpellsAndRetreats'),
-                cssClass: 'ose-declare-spells-and-retreats',
-            },
-            {
-                sequenceId: 1,
-                name: game.i18n.localize('OSECOMBATTRACKER.Initiative'),
-                cssClass: 'ose-initiative',
-            },
-            {
-                sequenceId: 2,
-                name: game.i18n.localize('OSECOMBATTRACKER.Movement'),
-                cssClass: 'ose-movement',
-            },
-            {
-                sequenceId: 3,
-                name: game.i18n.localize('OSECOMBATTRACKER.MissileAttacks'),
-                cssClass: 'ose-missile-attacks',
-            },
-            {
-                sequenceId: 4,
-                name: game.i18n.localize('OSECOMBATTRACKER.SpellCasting'),
-                cssClass: 'ose-spell-casting',
-            },
-            {
-                sequenceId: 5,
-                name: game.i18n.localize('OSECOMBATTRACKER.MeleeAttacks'),
-                cssClass: 'ose-melee-attacks',
-            }
-        ]
-        data.turns = sequence
+        data.turns = Object.values(combatTrackerPhases.phases)
         data.combatants = []
         for (const combatant of data.combat?.combatants ?? []) {
             if (!combatant.visible) continue;
@@ -55,6 +24,7 @@ export class OSECombatTracker extends CombatTracker {
                 img: await this._getCombatantThumbnail(combatant),
                 owner: combatant.owner,
                 defeated: combatant.defeated,
+                hidden: combatant.hidden,
                 canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS")
             })
         }
@@ -72,8 +42,9 @@ export class OSECombatTracker extends CombatTracker {
         return {
             $delimiters: ['[[', ']]'],
             combat,
-            sequenceId: 0,
+            phaseId: 0,
             combatants: {},
+            phases: this._phases,
             mount() {
                 for (const combatant of combat?.combatants ?? []) {
                     this.combatants[combatant.id] = {
@@ -86,21 +57,21 @@ export class OSECombatTracker extends CombatTracker {
                     }
                 }
             },
-            selectSequence(sequenceId) {
-                this.sequenceId = sequenceId
+            selectPhase(phaseIndex) {
+                this.phaseId = phaseIndex
             },
-            nextSequence() {
-                this.sequenceId++
-                if (this.sequenceId > 5) {
-                    this.sequenceId = 0
+            nextPhase() {
+                this.phaseId++
+                if (this.phaseId > this.phases.length - 1) {
+                    this.phaseId = 0
                     combat.nextRound()
                 }
             },
-            previousSequence() {
-                this.sequenceId--
-                if (this.sequenceId < 0) {
+            previousPhase() {
+                this.phaseId--
+                if (this.phaseId < 0) {
                     combat.previousRound()
-                    this.sequenceId = 5
+                    this.phaseId = this.phases.length - 1
                 }
             },
             toggleHidden(combatantId) {

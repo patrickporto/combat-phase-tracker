@@ -51,11 +51,11 @@
 
     <ol id="combat-tracker" class="directory-list">
         {{#each turns}}
-        <li class="directory-item" data-sequence-id="{{this.sequenceId}}" :class="sequenceId === {{this.sequenceId}} && 'active'" @click="selectSequence({{this.sequenceId}})">
+        <li class="directory-item" data-phase-id="{{this.phaseId}}" :class="phaseId === '{{this.id}}' && 'active'" @click="selectPhase('{{this.id}}')">
             <div class="phase-name document-name flexrow">
                 {{this.name}}
             </div>
-            <ol id="combatants" class="subdirectory" v-if="sequenceId === {{this.sequenceId}}">
+            <ol id="combatants" class="subdirectory" v-if="phaseId === '{{this.id}}'">
                 {{#each @root.combatants}}
                 <li class="combatant actor directory-item flexrow"  :class="{hidden: combatants['{{this.id}}']?.hidden , defeated: combatants['{{this.id}}']?.defeated}">
                     <img class="token-image flexcol" src="{{this.img}}" alt="{{this.name}}"/>
@@ -94,17 +94,17 @@
         {{#if user.isGM}}
             {{#if round}}
             <a class="combat-control" data-tooltip="COMBAT.RoundPrev" data-control="previousRound"><i class="fas fa-step-backward"></i></a>
-            <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousSequence"><i class="fas fa-arrow-left"></i></a>
+            <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousPhase"><i class="fas fa-arrow-left"></i></a>
             <a class="combat-control center" data-control="endCombat">{{localize 'COMBAT.End'}}</a>
-            <a class="combat-control" data-tooltip="COMBAT.TurnNext" @click="nextSequence"><i class="fas fa-arrow-right"></i></a>
+            <a class="combat-control" data-tooltip="COMBAT.TurnNext" @click="nextPhase"><i class="fas fa-arrow-right"></i></a>
             <a class="combat-control" data-tooltip="COMBAT.RoundNext" data-control="nextRound"><i class="fas fa-step-forward"></i></a>
             {{else}}
             <a class="combat-control center" data-control="startCombat">{{localize 'COMBAT.Begin'}}</a>
             {{/if}}
         {{else if control}}
-        <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousSequence"><i class="fas fa-arrow-left"></i></a>
-        <a class="combat-control center"  @click="nextSequence">{{localize 'COMBAT.TurnEnd'}}</a>
-        <a class="combat-control" data-tooltip="COMBAT.TurnNext"  @click="nextSequence"><i class="fas fa-arrow-right"></i></a>
+        <a class="combat-control" data-tooltip="COMBAT.TurnPrev" @click="previousPhase"><i class="fas fa-arrow-left"></i></a>
+        <a class="combat-control center"  @click="nextPhase">{{localize 'COMBAT.TurnEnd'}}</a>
+        <a class="combat-control" data-tooltip="COMBAT.TurnNext"  @click="nextPhase"><i class="fas fa-arrow-right"></i></a>
         {{/if}}
     {{/if}}
     </nav>
