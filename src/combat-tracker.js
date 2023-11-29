@@ -54,23 +54,7 @@ export class OSECombatTracker extends CombatTracker {
                 return this.currentPhase?.controls ?? []
             },
             async mount() {
-                for (const combatant of combat?.combatants ?? []) {
-                    const cssClass = {
-                        hidden: combatant.hidden,
-                        defeated: combatant.defeated,
-                        ...this.combatantCssClass[combatant.id] ?? {}
-                    }
-                    this.combatants[combatant.id] = {
-                        id: combatant.id,
-                        name: combatant.name,
-                        owner: combatant.owner,
-                        defeated: combatant.defeated,
-                        img: await combatTracker._getCombatantThumbnail(combatant),
-                        hidden: combatant.hidden,
-                        canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS"),
-                        cssClass,
-                    }
-                }
+                await this.updateCombatants(combat.combatants)
             },
             createPlaceholder(placeholder) {
                 const placeholderId = foundry.utils.randomID()
@@ -94,7 +78,7 @@ export class OSECombatTracker extends CombatTracker {
                 }
                 this.combatantCssClass[combatantId][cssClass] = !this.combatantCssClass[combatantId][cssClass]
             },
-            updateCombatants(combatants) {
+            async updateCombatants(combatants) {
                 this.combatants = {}
                 for (const combatant of combatants) {
                     const cssClass = {
@@ -107,6 +91,7 @@ export class OSECombatTracker extends CombatTracker {
                         name: combatant.name,
                         owner: combatant.owner,
                         defeated: combatant.defeated,
+                        img: await combatTracker._getCombatantThumbnail(combatant),
                         hidden: combatant.hidden,
                         canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS"),
                         cssClass,
@@ -137,6 +122,7 @@ export class OSECombatTracker extends CombatTracker {
                     phase: this.currentPhase,
                 })
                 this.currentPhase = newPhase
+                this.updateCombatants(combat?.combatants ?? [])
                 combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, {
                     ...this.phaseApi,
                     phase: newPhase,
@@ -153,6 +139,7 @@ export class OSECombatTracker extends CombatTracker {
                     return
                 }
                 this.currentSubPhase = newSubPhase
+                this.updateCombatants(combat?.combatants ?? [])
                 combatTrackerPhases.call(`activateSubPhase.${this.currentSubPhase.id}`, {
                     ...this.phaseApi,
                     subPhase: this.currentSubPhase,
