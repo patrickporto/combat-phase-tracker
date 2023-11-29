@@ -59,9 +59,7 @@
                         {{#if subphase.showPlaceholders }}
                         {{> placeholders }}
                         {{else}}
-                        {{#each @root.combatants as | combatant |}}
-                            {{> combatant combatant=combatant }}
-                        {{/each}}
+                        {{> combatants }}
                         {{/if}}
                     </ol>
                 </li>
@@ -72,9 +70,7 @@
                 {{#if phase.showPlaceholders }}
                 {{> placeholders }}
                 {{else}}
-                {{#each @root.combatants as | combatant |}}
-                    {{> combatant combatant=combatant }}
-                {{/each}}
+                {{> combatants }}
                 {{/if}}
             </ol>
             {{/if}}

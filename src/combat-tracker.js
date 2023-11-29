@@ -15,19 +15,6 @@ export class OSECombatTracker extends CombatTracker {
     async getData(options = {}) {
         const data = await super.getData(options);
         data.turns = Object.values(combatTrackerPhases.phases)
-        data.combatants = []
-        for (const combatant of data.combat?.combatants ?? []) {
-            if (!combatant.visible) continue;
-            data.combatants.push({
-                id: combatant.id,
-                name: combatant.name,
-                img: await this._getCombatantThumbnail(combatant),
-                owner: combatant.owner,
-                defeated: combatant.defeated,
-                hidden: combatant.hidden,
-                canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS")
-            })
-        }
         return data;
     }
     _onCombatantHoverIn(event) {
@@ -44,6 +31,7 @@ export class OSECombatTracker extends CombatTracker {
         return {
             $delimiters: ['[[', ']]'],
             combat,
+            user: game.user,
             currentPhase: phases[0],
             currentSubPhase: {},
             combatants: {},
@@ -65,7 +53,7 @@ export class OSECombatTracker extends CombatTracker {
                 }
                 return this.currentPhase?.controls ?? []
             },
-            mount() {
+            async mount() {
                 for (const combatant of combat?.combatants ?? []) {
                     const cssClass = {
                         hidden: combatant.hidden,
@@ -77,6 +65,7 @@ export class OSECombatTracker extends CombatTracker {
                         name: combatant.name,
                         owner: combatant.owner,
                         defeated: combatant.defeated,
+                        img: await combatTracker._getCombatantThumbnail(combatant),
                         hidden: combatant.hidden,
                         canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS"),
                         cssClass,
