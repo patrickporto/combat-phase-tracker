@@ -29,6 +29,15 @@ Hooks.on(`${CANONICAL_NAME}.setup`, async ({ combatTrackerPhases }) => {
     combatTrackerPhases.add({
         name: game.i18n.localize('OSECOMBATTRACKER.DeclareSpellsAndRetreats'),
         cssClass: 'ose-declare-spells-and-retreats',
+        controls: [
+            {
+                content: '<i class="fas fa-magic">',
+                tooltip: 'Declare Spells',
+                onClick: () => {
+                    console.log('Declare Spells')
+                }
+            }
+        ]
     })
     combatTrackerPhases.add({
         name: game.i18n.localize('OSECOMBATTRACKER.Initiative'),

@@ -16,11 +16,9 @@
                 <i class="fa-solid fa-bullseye-arrow"></i>
             </a>
             {{/if}}
-            <div class="token-effects">
-                {{#each combatant.effects}}
-                <img class="token-effect" src="{{combatant}}"/>
-                {{/each}}
-            </div>
         </div>
     </div>
+    <ol class="phase-combatant-controls">
+        <li class="phase-combatant-control" v-for="control in currentPhaseControls" v-html="control.content" @click="handleControlClick(control, '{{combatant}}')" :class="control.cssClass" :data-tooltip="control.tooltip"></li>
+    </ol>
 </li>

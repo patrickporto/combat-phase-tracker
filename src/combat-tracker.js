@@ -58,6 +58,12 @@ export class OSECombatTracker extends CombatTracker {
             get currentSubPhaseIndex() {
                 return this.currentSubPhases.findIndex(p => p.id === this.currentSubPhase.id)
             },
+            get currentPhaseControls() {
+                if (this.currentSubPhase?.controls) {
+                    return this.currentSubPhase?.controls
+                }
+                return this.currentPhase?.controls ?? []
+            },
             mount() {
                 for (const combatant of combat?.combatants ?? []) {
                     this.combatants[combatant.id] = {
@@ -73,7 +79,6 @@ export class OSECombatTracker extends CombatTracker {
             createPlaceholder(placeholder) {
                 const placeholderId = foundry.utils.randomID()
                 this.placeholders[placeholderId] = placeholder
-                console.log(this.placeholders)
             },
             updateCombatants(combatants) {
                 this.combatants = {}
@@ -87,6 +92,13 @@ export class OSECombatTracker extends CombatTracker {
                         canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS")
                     }
                 }
+            },
+            handleControlClick(control, combatantId) {
+                const combatant = combat.combatants.get(combatantId)
+                control.onClick({
+                    ...this.phaseApi,
+                    combatant,
+                })
             },
             get phaseApi() {
                 return {
