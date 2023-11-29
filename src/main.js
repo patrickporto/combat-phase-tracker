@@ -17,6 +17,7 @@ Hooks.on('init', async () => {
     CONFIG.ui.combat.combatTrackerPhases = api.combatTrackerPhases
     await loadTemplates({
         combatant: `${TEMPLATE_PATH}/combatant.html`,
+        placeholders: `${TEMPLATE_PATH}/placeholders.html`,
     });
 });
 Hooks.on('setup', async () => {
@@ -32,8 +33,29 @@ Hooks.on(`${CANONICAL_NAME}.setup`, async ({ combatTrackerPhases }) => {
     combatTrackerPhases.add({
         name: game.i18n.localize('OSECOMBATTRACKER.Initiative'),
         cssClass: 'ose-initiative',
-        onActivate() {
-            console.log('activate initiative')
+        showPlaceholders: true,
+        async onActivate({ createPlaceholder }) {
+            const friendly = new Roll('1d6')
+            const hostile = new Roll('1d6')
+            console.log(friendly, hostile)
+            await Promise.all([
+                friendly.toMessage({
+                    flavor: 'Friendly Initiative'
+                }),
+                hostile.toMessage({
+                    flavor: 'Hostile Initiative'
+                }),
+            ])
+            createPlaceholder({
+                name: 'Friendly',
+                details: friendly.total,
+                cssClass: 'ose-friendly-initiative',
+            })
+            createPlaceholder({
+                name: 'Hostile',
+                details: hostile.total,
+                cssClass: 'ose-hostile-initiative',
+            })
         }
     })
     combatTrackerPhases.add({

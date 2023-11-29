@@ -47,6 +47,7 @@ export class OSECombatTracker extends CombatTracker {
             currentPhase: phases[0],
             currentSubPhase: {},
             combatants: {},
+            placeholders: {},
             phases: phases,
             get currentPhaseIndex() {
                 return this.phases.findIndex(p => p.id === this.currentPhase.id)
@@ -69,6 +70,11 @@ export class OSECombatTracker extends CombatTracker {
                     }
                 }
             },
+            createPlaceholder(placeholder) {
+                const placeholderId = foundry.utils.randomID()
+                this.placeholders[placeholderId] = placeholder
+                console.log(this.placeholders)
+            },
             updateCombatants(combatants) {
                 this.combatants = {}
                 for (const combatant of combatants) {
@@ -85,10 +91,12 @@ export class OSECombatTracker extends CombatTracker {
             get phaseApi() {
                 return {
                     updateCombatants: this.updateCombatants,
+                    createPlaceholder: this.createPlaceholder,
                     combat,
                 }
             },
             changePhase(newPhase) {
+                this.placeholders = {}
                 combatTrackerPhases.call(`deactivatePhase.${this.currentPhase.id}`, {
                     ...this.phaseApi,
                     phase: this.currentPhase,
@@ -100,6 +108,7 @@ export class OSECombatTracker extends CombatTracker {
                 })
             },
             changeSubPhase(newSubPhase) {
+                this.placeholders = {}
                 combatTrackerPhases.call(`deactivateSubPhase.${this.currentSubPhase.id}`, {
                     ...this.phaseApi,
                     subPhase: this.currentSubPhase,

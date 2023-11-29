@@ -39,9 +39,6 @@
                 <i class="fas fa-{{#unless linked}}un{{/unless}}link"></i>
             </a>
             {{/if}}
-            <a class="combat-button combat-settings" data-tooltip="COMBAT.Settings" data-control="trackerSettings">
-                <i class="fas fa-cog"></i>
-            </a>
         </div>
     </header>
 
@@ -59,18 +56,26 @@
                         {{subphase.name}}
                     </div>
                     <ol id="combatants" class="subdirectory" v-if="currentSubPhase.id === '{{subphase.id}}'">
+                        {{#if subphase.showPlaceholders }}
+                        {{> placeholders }}
+                        {{else}}
                         {{#each @root.combatants as | combatant |}}
                             {{> combatant combatant=combatant}}
                         {{/each}}
+                        {{/if}}
                     </ol>
                 </li>
                 {{/each}}
             </ol>
             {{else}}
             <ol id="combatants" class="subdirectory" v-if="currentPhase.id === '{{phase.id}}'">
+                {{#if phase.showPlaceholders }}
+                {{> placeholders }}
+                {{else}}
                 {{#each @root.combatants as | combatant |}}
                     {{> combatant combatant=combatant}}
                 {{/each}}
+                {{/if}}
             </ol>
             {{/if}}
         </li>

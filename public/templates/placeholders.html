@@ -1,0 +1,6 @@
+<li class="placeholder directory-item flexrow" v-for="placeholder in placeholders" :class="placeholder.cssClass">
+    <div class="placeholder-name flexcol">
+        [[placeholder.name]]
+    </div>
+    <div class="placeholder-details flexcol" v-html="placeholder.details"></div>
+</li>
