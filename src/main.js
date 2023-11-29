@@ -31,7 +31,7 @@ Hooks.on(`${CANONICAL_NAME}.init`, async ({ combatTrackerPhases }) => {
                 content: '<i class="fas fa-magic">',
                 tooltip: 'Declare Spells',
                 onClick({ combatant, addCombatantCssClass, removeCombatantCssClass }) {
-                    const declareSpells = combatant.getFlag(CANONICAL_NAME, 'declareSpells') ?? false
+                    const declareSpells = combatant.getFlag(CANONICAL_NAME, 'declareSpells')
                     combatant.setFlag(CANONICAL_NAME, 'declareSpells', !declareSpells)
                     if (declareSpells) {
                         addCombatantCssClass(combatant.id, 'declare-spells')
