@@ -1,5 +1,5 @@
 <li class="combatant actor directory-item flexrow"  :class="combatant.cssClass" v-for="combatant in combatants">
-    <img class="token-image flexcol" :src="combatant.img" alt="[[combatant.name]]"/>
+    <img class="token-image flexcol" :src="combatant.img" :alt="combatant.name"/>
     <div class="token-name flexcol">
         <h4>[[combatant.name]]</h4>
         <div class="combatant-controls flexrow">

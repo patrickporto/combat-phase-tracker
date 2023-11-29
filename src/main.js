@@ -93,6 +93,15 @@ Hooks.on(`${CANONICAL_NAME}.init`, async ({ combatTrackerPhases }) => {
     combatTrackerPhases.add({
         name: 'OSECOMBATTRACKER.WinningActs',
         cssClass: 'ose-winning-acts',
+        getCombatants(combat) {
+            const initiative = combat.getFlag(CANONICAL_NAME, 'initiative')
+            if (!initiative) {
+                return []
+            }
+            const winner = initiative.friendly > initiative.hostile ? CONST.TOKEN_DISPOSITIONS.FRIENDLY : CONST.TOKEN_DISPOSITIONS.HOSTILE
+
+            return combat.combatants.filter(c => c.token.disposition === winner)
+        },
         subPhases: [
             {
                 name: 'OSECOMBATTRACKER.Movement',
@@ -115,6 +124,15 @@ Hooks.on(`${CANONICAL_NAME}.init`, async ({ combatTrackerPhases }) => {
     combatTrackerPhases.add({
         name: 'OSECOMBATTRACKER.OtherSidesAct',
         cssClass: 'ose-winning-acts',
+        getCombatants(combat) {
+            const initiative = combat.getFlag(CANONICAL_NAME, 'initiative')
+            if (!initiative) {
+                return []
+            }
+            const winner = initiative.friendly > initiative.hostile ? CONST.TOKEN_DISPOSITIONS.FRIENDLY : CONST.TOKEN_DISPOSITIONS.HOSTILE
+
+            return combat.combatants.filter(c => c.token.disposition !== winner)
+        },
         subPhases: [
             {
                 name: 'OSECOMBATTRACKER.Movement',
