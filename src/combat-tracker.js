@@ -53,6 +53,21 @@ export class OSECombatTracker extends CombatTracker {
                 }
                 return this.currentPhase?.controls ?? []
             },
+            getSubPhaseCssClass(subPhaseId) {
+                const subPhase = this.currentSubPhases.find(p => p.id === subPhaseId)
+                let subPhaseCssClass = {
+                    active: this.currentSubPhase.id === subPhaseId,
+                }
+                if (typeof subPhase?.cssClass === 'string') {
+                    subPhaseCssClass[subPhase?.cssClass] = true
+                } else {
+                    subPhaseCssClass = {
+                        ...subPhaseCssClass,
+                        ...subPhase?.cssClass ?? {}
+                    }
+                }
+                return subPhaseCssClass
+            },
             async mount() {
                 await this.updateCombatants(combat.combatants)
             },

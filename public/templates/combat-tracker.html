@@ -51,7 +51,7 @@
             {{#if phase.subPhases}}
             <ol class="subdirectory subphases" v-if="currentPhase.id === '{{phase.id}}'">
                 {{#each phase.subPhases as | subphase |}}
-                <li class="directory-item subphase" data-subphase-id="{{subphase.id}}" :class="currentSubPhase.id === '{{subphase.id}}' && 'active'" @click="selectSubPhase('{{subphase.id}}')">
+                <li class="directory-item subphase" data-subphase-id="{{subphase.id}}" :class="getSubPhaseCssClass('{{subphase.id}}')" @click="selectSubPhase('{{subphase.id}}')">
                     <div class="phase-name document-name flexrow">
                         {{localize subphase.name}}
                     </div>

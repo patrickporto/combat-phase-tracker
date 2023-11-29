@@ -27,3 +27,12 @@
 .declare-spells {
     text-shadow: 0 0 8px var(--color-shadow-primary);
 }
+
+.ose-spell-casting li:not(.declare-spells) {
+    color: var(--color-text-light-7);
+    pointer-events: none;
+}
+
+.ose-spell-casting li:not(.declare-spells) img {
+    opacity: 0.3;
+}
