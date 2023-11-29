@@ -1,6 +1,5 @@
 import { TEMPLATE_PATH } from "./constants";
 import { combatTrackerPhases } from "./phases";
-import { phaseEvents } from "./phase-events";
 
 export class OSECombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -90,23 +89,29 @@ export class OSECombatTracker extends CombatTracker {
                 }
             },
             changePhase(newPhase) {
+                combatTrackerPhases.call(`deactivatePhase.${this.currentPhase.id}`, {
+                    ...this.phaseApi,
+                    phase: this.currentPhase,
+                })
                 this.currentPhase = newPhase
-                phaseEvents.call(`changePhase`, {
+                combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, {
                     ...this.phaseApi,
                     phase: newPhase,
-                    currentSubPhase: this.currentSubPhase,
                 })
             },
             changeSubPhase(newSubPhase) {
+                combatTrackerPhases.call(`deactivateSubPhase.${this.currentSubPhase.id}`, {
+                    ...this.phaseApi,
+                    subPhase: this.currentSubPhase,
+                })
                 if (!newSubPhase) {
                     this.currentSubPhase = {}
                     return
                 }
                 this.currentSubPhase = newSubPhase
-                phaseEvents.call(`changeSubPhase`, {
+                combatTrackerPhases.call(`activateSubPhase.${this.currentSubPhase.id}`, {
                     ...this.phaseApi,
-                    phase: this.currentPhase,
-                    currentSubPhase: newSubPhase,
+                    subPhase: this.currentSubPhase,
                 })
             },
             selectPhase(phaseId) {

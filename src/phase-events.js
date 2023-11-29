@@ -1,26 +1,3 @@
-class PhaseEvents {
-    constructor() {
-        this._listeners = {}
-    }
+import { Observer } from "./observer"
 
-    on(name, fn) {
-        if (!this._listeners[name]) {
-            this._listeners[name] = []
-        }
-        this._listeners[name].push(fn)
-    }
-
-    off(name, fn) {
-        if (!this._listeners[name]) return
-        this._listeners[name] = this._listeners[name].filter(f => f !== fn)
-    }
-
-    call(name, data) {
-        if (!this._listeners[name]) return
-        for (const fn of this._listeners[name]) {
-            fn(data)
-        }
-    }
-}
-
-export const phaseEvents = new PhaseEvents()
+export const phaseEvents = new Observer()
