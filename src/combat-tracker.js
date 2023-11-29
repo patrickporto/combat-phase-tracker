@@ -47,6 +47,7 @@ export class OSECombatTracker extends CombatTracker {
             currentPhase: phases[0],
             currentSubPhase: {},
             combatants: {},
+            combatantCssClass: {},
             placeholders: {},
             phases: phases,
             get currentPhaseIndex() {
@@ -66,13 +67,19 @@ export class OSECombatTracker extends CombatTracker {
             },
             mount() {
                 for (const combatant of combat?.combatants ?? []) {
+                    const cssClass = {
+                        hidden: combatant.hidden,
+                        defeated: combatant.defeated,
+                        ...this.combatantCssClass[combatant.id] ?? {}
+                    }
                     this.combatants[combatant.id] = {
                         id: combatant.id,
                         name: combatant.name,
                         owner: combatant.owner,
                         defeated: combatant.defeated,
                         hidden: combatant.hidden,
-                        canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS")
+                        canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS"),
+                        cssClass,
                     }
                 }
             },
@@ -80,16 +87,40 @@ export class OSECombatTracker extends CombatTracker {
                 const placeholderId = foundry.utils.randomID()
                 this.placeholders[placeholderId] = placeholder
             },
+            addCombatantCssClass(combatantId, cssClass) {
+                if (!this.combatantCssClass[combatantId]) {
+                    this.combatantCssClass[combatantId] = {}
+                }
+                this.combatantCssClass[combatantId][cssClass] = true
+            },
+            removeCombatantCssClass(combatantId, cssClass) {
+                if (!this.combatantCssClass[combatantId]) {
+                    this.combatantCssClass[combatantId] = {}
+                }
+                this.combatantCssClass[combatantId][cssClass] = false
+            },
+            toggleCombatantCssClass(combatantId, cssClass) {
+                if (!this.combatantCssClass[combatantId]) {
+                    this.combatantCssClass[combatantId] = {}
+                }
+                this.combatantCssClass[combatantId][cssClass] = !this.combatantCssClass[combatantId][cssClass]
+            },
             updateCombatants(combatants) {
                 this.combatants = {}
                 for (const combatant of combatants) {
+                    const cssClass = {
+                        hidden: combatant.hidden,
+                        defeated: combatant.defeated,
+                        ...this.combatantCssClass[combatant.id] ?? {}
+                    }
                     this.combatants[combatant.id] = {
                         id: combatant.id,
                         name: combatant.name,
                         owner: combatant.owner,
                         defeated: combatant.defeated,
                         hidden: combatant.hidden,
-                        canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS")
+                        canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS"),
+                        cssClass,
                     }
                 }
             },
@@ -105,6 +136,9 @@ export class OSECombatTracker extends CombatTracker {
                     updateCombatants: this.updateCombatants,
                     createPlaceholder: this.createPlaceholder,
                     combat,
+                    addCombatantCssClass: this.addCombatantCssClass,
+                    removeCombatantCssClass: this.removeCombatantCssClass,
+                    toggleCombatantCssClass: this.toggleCombatantCssClass,
                 }
             },
             changePhase(newPhase) {

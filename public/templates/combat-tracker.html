@@ -46,14 +46,14 @@
         {{#each turns as | phase |}}
         <li class="directory-item phase" data-phase-id="{{phase.id}}" :class="currentPhase.id === '{{phase.id}}' && 'active'" @click="currentPhase.id !== '{{phase.id}}' && selectPhase('{{phase.id}}')">
             <div class="phase-name document-name flexrow">
-                {{phase.name}}
+                {{localize phase.name}}
             </div>
             {{#if phase.subPhases}}
             <ol class="subdirectory subphases" v-if="currentPhase.id === '{{phase.id}}'">
                 {{#each phase.subPhases as | subphase |}}
                 <li class="directory-item subphase" data-subphase-id="{{subphase.id}}" :class="currentSubPhase.id === '{{subphase.id}}' && 'active'" @click="selectSubPhase('{{subphase.id}}')">
                     <div class="phase-name document-name flexrow">
-                        {{subphase.name}}
+                        {{localize subphase.name}}
                     </div>
                     <ol id="combatants" class="subdirectory" v-if="currentSubPhase.id === '{{subphase.id}}'">
                         {{#if subphase.showPlaceholders }}

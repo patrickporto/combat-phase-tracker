@@ -18,3 +18,12 @@
     padding: 8px;
     cursor: pointer;
 }
+
+.phase-combatant-control:hover {
+    text-shadow: 0 0 8px var(--color-shadow-primary);
+}
+
+/* Old School Essentials */
+.declare-spells {
+    text-shadow: 0 0 8px var(--color-shadow-primary);
+}

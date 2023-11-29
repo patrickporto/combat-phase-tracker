@@ -1,4 +1,4 @@
-<li class="combatant actor directory-item flexrow"  :class="{hidden: combatants['{{combatant.id}}']?.hidden , defeated: combatants['{{combatant.id}}']?.defeated}">
+<li class="combatant actor directory-item flexrow"  :class="combatants['{{combatant.id}}']?.cssClass">
     <img class="token-image flexcol" src="{{combatant.img}}" alt="{{combatant.name}}"/>
     <div class="token-name flexcol">
         <h4>{{combatant.name}}</h4>
@@ -19,6 +19,6 @@
         </div>
     </div>
     <ol class="phase-combatant-controls">
-        <li class="phase-combatant-control" v-for="control in currentPhaseControls" v-html="control.content" @click="handleControlClick(control, '{{combatant}}')" :class="control.cssClass" :data-tooltip="control.tooltip"></li>
+        <li class="phase-combatant-control" v-for="control in currentPhaseControls" v-html="control.content" @click="handleControlClick(control, '{{combatant.id}}')" :class="control.cssClass" :data-tooltip="control.tooltip"></li>
     </ol>
 </li>

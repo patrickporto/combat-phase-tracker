@@ -19,34 +19,57 @@ Hooks.on('init', async () => {
         combatant: `${TEMPLATE_PATH}/combatant.html`,
         placeholders: `${TEMPLATE_PATH}/placeholders.html`,
     });
-});
-Hooks.on('setup', async () => {
-    Hooks.callAll(`${CANONICAL_NAME}.setup`, api);
+    Hooks.callAll(`${CANONICAL_NAME}.init`, api);
 });
 
-
-Hooks.on(`${CANONICAL_NAME}.setup`, async ({ combatTrackerPhases }) => {
+Hooks.on(`${CANONICAL_NAME}.init`, async ({ combatTrackerPhases }) => {
     combatTrackerPhases.add({
-        name: game.i18n.localize('OSECOMBATTRACKER.DeclareSpellsAndRetreats'),
+        name: 'OSECOMBATTRACKER.DeclareSpellsAndRetreats',
         cssClass: 'ose-declare-spells-and-retreats',
         controls: [
             {
                 content: '<i class="fas fa-magic">',
                 tooltip: 'Declare Spells',
-                onClick: () => {
-                    console.log('Declare Spells')
+                onClick({ combatant, addCombatantCssClass, removeCombatantCssClass }) {
+                    const declareSpells = combatant.getFlag(CANONICAL_NAME, 'declareSpells') ?? false
+                    combatant.setFlag(CANONICAL_NAME, 'declareSpells', !declareSpells)
+                    if (declareSpells) {
+                        addCombatantCssClass(combatant.id, 'declare-spells')
+                    } else {
+                        removeCombatantCssClass(combatant.id, 'declare-spells')
+                    }
+                },
+                onActivate({ combat }) {
+                    for (const combatant of combat.combatants) {
+                        combatant.setFlag(CANONICAL_NAME, 'declareSpells', false)
+                    }
                 }
             }
         ]
     })
     combatTrackerPhases.add({
-        name: game.i18n.localize('OSECOMBATTRACKER.Initiative'),
+        name: 'OSECOMBATTRACKER.Initiative',
         cssClass: 'ose-initiative',
         showPlaceholders: true,
-        async onActivate({ createPlaceholder }) {
-            const friendly = new Roll('1d6')
-            const hostile = new Roll('1d6')
-            console.log(friendly, hostile)
+        async onActivate({ combat, createPlaceholder }) {
+            let friendly = new Roll('1d6')
+            let hostile = new Roll('1d6')
+            await Promise.all([
+                friendly.roll(),
+                hostile.roll()
+            ])
+            while (friendly.total === hostile.total) {
+                friendly = new Roll('1d6')
+                hostile = new Roll('1d6')
+                await Promise.all([
+                    friendly.roll(),
+                    hostile.roll()
+                ])
+            }
+            combat.setFlag(CANONICAL_NAME, 'initiative', {
+                friendly: friendly.total,
+                hostile: hostile.total,
+            })
             await Promise.all([
                 friendly.toMessage({
                     flavor: 'Friendly Initiative'
@@ -68,45 +91,45 @@ Hooks.on(`${CANONICAL_NAME}.setup`, async ({ combatTrackerPhases }) => {
         }
     })
     combatTrackerPhases.add({
-        name: game.i18n.localize('OSECOMBATTRACKER.WinningActs'),
+        name: 'OSECOMBATTRACKER.WinningActs',
         cssClass: 'ose-winning-acts',
         subPhases: [
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.Movement'),
+                name: 'OSECOMBATTRACKER.Movement',
                 cssClass: 'ose-movement',
             },
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.MissileAttacks'),
+                name: 'OSECOMBATTRACKER.MissileAttacks',
                 cssClass: 'ose-missile-attacks',
             },
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.SpellCasting'),
+                name: 'OSECOMBATTRACKER.SpellCasting',
                 cssClass: 'ose-spell-casting',
             },
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.MeleeAttacks'),
+                name: 'OSECOMBATTRACKER.MeleeAttacks',
                 cssClass: 'ose-melee-attacks',
             }
         ]
     })
     combatTrackerPhases.add({
-        name: game.i18n.localize('OSECOMBATTRACKER.OtherSidesAct'),
+        name: 'OSECOMBATTRACKER.OtherSidesAct',
         cssClass: 'ose-winning-acts',
         subPhases: [
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.Movement'),
+                name: 'OSECOMBATTRACKER.Movement',
                 cssClass: 'ose-movement',
             },
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.MissileAttacks'),
+                name: 'OSECOMBATTRACKER.MissileAttacks',
                 cssClass: 'ose-missile-attacks',
             },
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.SpellCasting'),
+                name: 'OSECOMBATTRACKER.SpellCasting',
                 cssClass: 'ose-spell-casting',
             },
             {
-                name: game.i18n.localize('OSECOMBATTRACKER.MeleeAttacks'),
+                name: 'OSECOMBATTRACKER.MeleeAttacks',
                 cssClass: 'ose-melee-attacks',
             }
         ]
