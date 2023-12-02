@@ -7,7 +7,7 @@ export class OSECombatTracker extends CombatTracker {
             template: `${TEMPLATE_PATH}/combat-tracker.html`,
             classes: [
                 ...super.defaultOptions.classes,
-                'ose-combat-tracker'
+                'combat-phase-tracker'
             ],
         });
     }
@@ -240,6 +240,6 @@ export class OSECombatTracker extends CombatTracker {
             const scope = await this.createScope()
             this._app = createApp(scope)
         }
-        this._app.mount(".ose-combat-tracker")
+        this._app.mount(".combat-phase-tracker")
     }
 }

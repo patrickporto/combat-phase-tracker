@@ -1,5 +1,5 @@
 {
-    "id": "ose-combat-tracker",
+    "id": "combat-phase-tracker",
     "version": "11.0.0",
     "compatibility": {
         "minimum": "11",
@@ -15,7 +15,7 @@
             "path": "lang/en.json"
         }
     ],
-    "url": "https://github.com/patrickporto/ose-combat-tracker",
+    "url": "https://github.com/patrickporto/combat-phase-tracker",
     "relationships": {
         "requires": [
             {
@@ -29,9 +29,9 @@
         ]
     },
     "esmodules": [
-        "ose-combat-tracker.js"
+        "combat-phase-tracker.js"
     ],
     "styles": [
-        "ose-combat-tracker.css"
+        "combat-phase-tracker.css"
     ]
 }

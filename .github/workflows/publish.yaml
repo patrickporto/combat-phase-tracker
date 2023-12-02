@@ -4,7 +4,7 @@ on:
         types: [published]
 
 env:
-    PKG_NAME: ose-combat-tracker
+    PKG_NAME: combat-phase-tracker
     MANIFEST_FILE_PATH: dist/module.json
     RELEASE_NAME: ${{ github.event.release.tag_name }}
 

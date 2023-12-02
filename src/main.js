@@ -1,6 +1,6 @@
 import { OSECombatTracker } from "./combat-tracker.js";
 import { CANONICAL_NAME, TEMPLATE_PATH } from "./constants.js";
-import "./ose-combat-tracker.css";
+import "./combat-phase-tracker.css";
 import { combatTrackerPhases } from "./phases.js";
 
 const api = {
