@@ -15,10 +15,10 @@ export class Observer {
         this._listeners[name] = this._listeners[name].filter(f => f !== fn);
     }
 
-    call(name, data) {
+    async call(name, data) {
         if (!this._listeners[name]) return;
         for (const fn of this._listeners[name]) {
-            fn(data);
+            await fn(data);
         }
     }
 }

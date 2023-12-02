@@ -38,8 +38,8 @@ class CombatTrackerPhases {
         this._observer.on(eventName, callback)
     }
 
-    call(eventName, payload) {
-        this._observer.call(eventName, payload)
+    async call(eventName, payload) {
+        await this._observer.call(eventName, payload)
     }
 
     get phases() {

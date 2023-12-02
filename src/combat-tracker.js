@@ -30,7 +30,6 @@ export class OSECombatTracker extends CombatTracker {
 
         return {
             $delimiters: ['[[', ']]'],
-            combat,
             user: game.user,
             currentPhase: phases[0],
             currentSubPhase: {},
@@ -113,17 +112,19 @@ export class OSECombatTracker extends CombatTracker {
                     }
                 }
             },
-            handleControlClick(control, combatantId) {
+            async handleControlClick(control, combatantId) {
                 const combatant = combat.combatants.get(combatantId)
                 control.onClick({
-                    ...this.phaseApi,
+                    ...await this.getPhaseApi(),
                     combatant,
                 })
             },
-            get phaseApi() {
+            async getPhaseApi() {
+                const { combat } = await combatTracker.getData()
                 return {
+                    combatants: Object.values(this.combatants),
                     createPlaceholder: this.createPlaceholder,
-                    combat,
+                    combat: combat,
                     addCombatantCssClass: this.addCombatantCssClass,
                     removeCombatantCssClass: this.removeCombatantCssClass,
                     toggleCombatantCssClass: this.toggleCombatantCssClass,
@@ -131,24 +132,24 @@ export class OSECombatTracker extends CombatTracker {
             },
             async changePhase(newPhase) {
                 this.placeholders = {}
-                combatTrackerPhases.call(`deactivatePhase.${this.currentPhase.id}`, {
-                    ...this.phaseApi,
-                })
+                const phaseApi = await this.getPhaseApi()
+                combatTrackerPhases.call(`deactivatePhase.${this.currentPhase.id}`, phaseApi)
                 this.currentPhase = newPhase
                 if (newPhase.getCombatants) {
                     await this.updateCombatants(newPhase.getCombatants(combat))
                 } else {
                     await this.updateCombatants(combat.combatants)
                 }
-                combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, {
-                    ...this.phaseApi,
-                })
+                if (newPhase.autoSkip && newPhase.autoSkip(phaseApi)) {
+                    this.nextPhase()
+                    return
+                }
+                combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, phaseApi)
             },
             async changeSubPhase(newSubPhase) {
                 this.placeholders = {}
-                combatTrackerPhases.call(`deactivateSubPhase.${this.currentSubPhase.id}`, {
-                    ...this.phaseApi,
-                })
+                const phaseApi = await this.getPhaseApi()
+                combatTrackerPhases.call(`deactivateSubPhase.${this.currentSubPhase.id}`, phaseApi)
                 if (!newSubPhase) {
                     this.currentSubPhase = {}
                     return
@@ -161,9 +162,11 @@ export class OSECombatTracker extends CombatTracker {
                 } else {
                     await this.updateCombatants(combat.combatants)
                 }
-                combatTrackerPhases.call(`activateSubPhase.${this.currentSubPhase.id}`, {
-                    ...this.phaseApi,
-                })
+                if (newSubPhase.autoSkip && newSubPhase.autoSkip(phaseApi)) {
+                    this.nextSubPhase()
+                    return
+                }
+                combatTrackerPhases.call(`activateSubPhase.${this.currentSubPhase.id}`, phaseApi)
             },
             async selectPhase(phaseId) {
                 const selectedPhase = this.phases.find(p => p.id === phaseId)
