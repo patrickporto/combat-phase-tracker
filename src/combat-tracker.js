@@ -1,7 +1,7 @@
 import { TEMPLATE_PATH } from "./constants";
 import { combatTrackerPhases } from "./phases";
 
-export class OSECombatTracker extends CombatTracker {
+export class CombatPhaseTracker extends CombatTracker {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             template: `${TEMPLATE_PATH}/combat-tracker.html`,

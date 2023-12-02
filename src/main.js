@@ -1,4 +1,4 @@
-import { OSECombatTracker } from "./combat-tracker.js";
+import { CombatPhaseTracker } from "./combat-tracker.js";
 import { CANONICAL_NAME, TEMPLATE_PATH } from "./constants.js";
 import "./combat-phase-tracker.css";
 import { combatTrackerPhases } from "./phases.js";
@@ -13,7 +13,7 @@ Hooks.on('init', async () => {
         return
     }
     game.modules.get(CANONICAL_NAME).api = api
-    CONFIG.ui.combat = OSECombatTracker;
+    CONFIG.ui.combat = CombatPhaseTracker;
     CONFIG.ui.combat.combatTrackerPhases = api.combatTrackerPhases
     await loadTemplates({
         combatants: `${TEMPLATE_PATH}/combatants.html`,
