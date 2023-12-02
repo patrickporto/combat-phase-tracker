@@ -1,4 +1,4 @@
-#  (CORE)
+# Combat Phase Tracker (CORE)
 
 ![](https://img.shields.io/badge/Foundry-v11-informational)
 [![Donate via Ko-Fi](https://img.shields.io/badge/donate-ko--fi-red.svg?logo=ko-fi)](https://ko-fi.com/darkmoor) [![Latest Version](https://img.shields.io/github/v/tag/patrickporto/combat-phase-tracker?label=version)](https://github.com/patrickporto/combat-phase-tracker/releases) [![Download Count](https://img.shields.io/github/downloads/patrickporto/combat-phase-tracker/latest/combat-phase-tracker.zip)](https://github.com/patrickporto/combat-phase-tracker/releases)
@@ -6,4 +6,9 @@
 
 ## About
 
+This module enables a phased combat tracker for Foundry VTT.
 
+
+### Supported Systems
+
+- [Old School Essentials](https://github.com/patrickporto/combat-phase-tracker-ose)
