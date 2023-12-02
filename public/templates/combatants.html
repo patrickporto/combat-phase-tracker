@@ -1,4 +1,4 @@
-<li class="combatant actor directory-item flexrow"  :class="combatant.cssClass" v-for="combatant in combatants">
+<li class="combatant actor directory-item flexrow"  :class="combatant.cssClass" v-for="combatant in combatants" :data-combatant-id="combatant.id">
     <img class="token-image flexcol" :src="combatant.img" :alt="combatant.name"/>
     <div class="token-name flexcol">
         <h4>[[combatant.name]]</h4>
