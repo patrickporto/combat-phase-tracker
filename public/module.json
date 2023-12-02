@@ -6,8 +6,8 @@
         "verified": "11",
         "maximum": "11"
     },
-    "title": "Old School Essentials Combat Tracker",
-    "description": "A combat tracker for Old School Essentials",
+    "title": "Combat Phase Tracker (Core)",
+    "description": "A phased combat tracker for Foundry VTT",
     "languages": [
         {
             "lang": "en",
