@@ -147,10 +147,6 @@ export class CombatPhaseTracker extends CombatTracker {
                 } else {
                     await this.updateCombatants(combat.combatants)
                 }
-                if (newPhase.autoSkip && newPhase.autoSkip(phaseApi)) {
-                    this.nextPhase()
-                    return
-                }
                 combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, phaseApi)
             },
             async changeSubPhase(newSubPhase) {
@@ -168,10 +164,6 @@ export class CombatPhaseTracker extends CombatTracker {
                     await this.updateCombatants(this.currentPhase.getCombatants(combat))
                 } else {
                     await this.updateCombatants(combat.combatants)
-                }
-                if (newSubPhase.autoSkip && newSubPhase.autoSkip(phaseApi)) {
-                    this.nextSubPhase()
-                    return
                 }
                 combatTrackerPhases.call(`activateSubPhase.${this.currentSubPhase.id}`, phaseApi)
             },
