@@ -56,7 +56,7 @@
                         {{localize subphase.name}}
                     </div>
                     <ol id="combatants" class="subdirectory" v-if="currentSubPhase.id === '{{subphase.id}}'">
-                        {{#if subphase.showPlaceholders }}
+                        {{#if subphase.hideCombatants }}
                         {{> placeholders }}
                         {{else}}
                         {{> combatants }}
@@ -67,7 +67,7 @@
             </ol>
             {{else}}
             <ol id="combatants" class="subdirectory" v-if="currentPhase.id === '{{phase.id}}'">
-                {{#if phase.showPlaceholders }}
+                {{#if phase.hideCombatants }}
                 {{> placeholders }}
                 {{else}}
                 {{> combatants }}
