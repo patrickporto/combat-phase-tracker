@@ -147,6 +147,7 @@ export class CombatPhaseTracker extends CombatTracker {
                 } else {
                     await this.updateCombatants(combat.combatants)
                 }
+                this.scrollToPhase(newPhase.id)
                 combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, phaseApi)
             },
             async changeSubPhase(newSubPhase) {
@@ -228,7 +229,11 @@ export class CombatPhaseTracker extends CombatTracker {
             pingCombatant(combatantId) {
                 const combatant = combat.combatants.get(combatantId)
                 combatTracker._onPingCombatant(combatant)
-            }
+            },
+            scrollToPhase(phaseId) {
+                const phaseElement = document.querySelector(`.phase[data-phase-id="${phaseId}"]`)
+                phaseElement.scrollIntoView()
+            },
         };
     }
 
