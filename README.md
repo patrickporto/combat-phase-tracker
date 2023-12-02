@@ -6,8 +6,8 @@
 
 ## About
 
-This module enables a phased combat tracker for Foundry VTT.
-
+Combat Phase Tracker adds a phased combat tracker to Foundry VTT, allowing for more organized combat encounters.
+![image](https://github.com/patrickporto/combat-phase-tracker/assets/1543276/13a5c7e0-5774-4057-a5b1-89b420128c10)
 
 ### Supported Systems
 
