@@ -1,5 +1,5 @@
-import { TEMPLATE_PATH } from "./constants";
-import { combatTrackerPhases } from "./phases";
+import { CANONICAL_NAME, TEMPLATE_PATH } from "./constants";
+import { PHASE_SCOPE, combatTrackerPhases } from "./phases";
 
 export class CombatPhaseTracker extends CombatTracker {
     static get defaultOptions() {
@@ -68,6 +68,12 @@ export class CombatPhaseTracker extends CombatTracker {
                 return subPhaseCssClass
             },
             async mount() {
+                Hooks.on('combatRound', () => {
+                    combatTrackerPhases.removePhasesByScope(PHASE_SCOPE.ROUND)
+                })
+                Hooks.on(`${CANONICAL_NAME}.createPhase`, () => {
+                    this.phases = Object.values(combatTrackerPhases.phases)
+                })
                 await this.updateCombatants(combatTracker.viewed.combatants)
             },
             createPlaceholder(placeholder) {
@@ -128,6 +134,7 @@ export class CombatPhaseTracker extends CombatTracker {
                     addCombatantCssClass: this.addCombatantCssClass,
                     removeCombatantCssClass: this.removeCombatantCssClass,
                     toggleCombatantCssClass: this.toggleCombatantCssClass,
+                    phases: combatTrackerPhases,
                 }
             },
             async changePhase(newPhase) {

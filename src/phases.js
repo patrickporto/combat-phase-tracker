@@ -1,4 +1,10 @@
+import { CANONICAL_NAME } from "./constants";
 import { Observer } from "./observer"
+
+export const PHASE_SCOPE = {
+    COMBAT: 'combat',
+    ROUND: 'round',
+}
 
 class CombatTrackerPhases {
     constructor() {
@@ -27,11 +33,23 @@ class CombatTrackerPhases {
         if (phase.onDeactivate) {
             this._observer.on(`deactivatePhase.${id}`, phase.onDeactivate)
         }
-        this._phases[id] = {
+        const newPhase = {
+            scope: PHASE_SCOPE.COMBAT,
             ...phase,
             id,
             subPhases,
         };
+        this._phases[id] = newPhase;
+        Hooks.call(`${CANONICAL_NAME}.createPhase`, newPhase);
+        return newPhase
+    }
+
+    removePhasesByScope(scope) {
+        for (const id in this._phases) {
+            if (this._phases[id].scope === scope) {
+                delete this._phases[id]
+            }
+        }
     }
 
     on(eventName, callback) {
