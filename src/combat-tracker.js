@@ -68,7 +68,7 @@ export class OSECombatTracker extends CombatTracker {
                 return subPhaseCssClass
             },
             async mount() {
-                await this.updateCombatants(combat.combatants)
+                await this.updateCombatants(combatTracker.viewed.combatants)
             },
             createPlaceholder(placeholder) {
                 const placeholderId = foundry.utils.randomID()
