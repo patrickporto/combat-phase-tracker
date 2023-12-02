@@ -14,7 +14,7 @@
             </a>
         </div>
     </div>
-    <ol class="phase-combatant-controls">
+    <ol class="phase-combatant-controls" v-if="currentPhaseControls.length > 0">
         <li class="phase-combatant-control" v-for="control in currentPhaseControls" v-html="control.content" @click="handleControlClick(control, combatant.id)" :class="control.cssClass" :data-tooltip="control.tooltip"></li>
     </ol>
 </li>
