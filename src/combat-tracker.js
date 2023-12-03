@@ -274,4 +274,22 @@ export class CombatPhaseTracker extends CombatTracker {
         }
         this._app.mount(".combat-phase-tracker")
     }
+
+    _getEntryContextOptions() {
+        return [
+            {
+                name: "COMBAT.CombatantUpdate",
+                icon: '<i class="fas fa-edit"></i>',
+                callback: this._onConfigureCombatant.bind(this)
+            },
+            {
+                name: "COMBAT.CombatantRemove",
+                icon: '<i class="fas fa-trash"></i>',
+                callback: li => {
+                    const combatant = this.viewed.combatants.get(li.data("combatant-id"));
+                    if (combatant) return combatant.delete();
+                }
+            }
+        ];
+    }
 }
