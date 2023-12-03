@@ -73,6 +73,8 @@ export class CombatPhaseTracker extends CombatTracker {
             async mount() {
                 Hooks.on('combatRound', () => {
                     combatTrackerPhases.removePhasesByScope(PHASE_SCOPE.ROUND)
+                    this.phases = combatTrackerPhases.phases
+                    this.currentPhase = combatTrackerPhases.initial
                 })
                 Hooks.on(`${CANONICAL_NAME}.createPhase`, () => {
                     this.phases = combatTrackerPhases.phases
