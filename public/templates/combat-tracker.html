@@ -56,22 +56,14 @@
                         {{localize subphase.name}}
                     </div>
                     <ol id="combatants" class="subdirectory" v-if="currentSubPhase.id === '{{subphase.id}}'">
-                        {{#if subphase.hideCombatants }}
-                        {{> placeholders }}
-                        {{else}}
-                        {{> combatants }}
-                        {{/if}}
+                        {{> turns }}
                     </ol>
                 </li>
                 {{/each}}
             </ol>
             {{else}}
             <ol id="combatants" class="subdirectory" v-if="currentPhase.id === '{{phase.id}}'">
-                {{#if phase.hideCombatants }}
-                {{> placeholders }}
-                {{else}}
-                {{> combatants }}
-                {{/if}}
+                {{> turns }}
             </ol>
             {{/if}}
         </li>

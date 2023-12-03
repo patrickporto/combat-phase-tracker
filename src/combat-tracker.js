@@ -1,6 +1,11 @@
 import { CANONICAL_NAME, TEMPLATE_PATH } from "./constants";
 import { PHASE_SCOPE, combatTrackerPhases } from "./phases";
 
+const COMBATANT_TYPE = {
+    COMBATANT: 'combatant',
+    PLACEHOLDER: 'placeholder',
+}
+
 export class CombatPhaseTracker extends CombatTracker {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
@@ -34,9 +39,15 @@ export class CombatPhaseTracker extends CombatTracker {
             currentPhase: phases[0],
             currentSubPhase: {},
             combatants: {},
-            combatantCssClass: {},
             placeholders: {},
+            turnCssClass: {},
             phases: phases,
+            COMBATANT_TYPE,
+            get turns() {
+                const combatants = this.combatants
+                const placeholders = this.placeholders
+                return Object.values(combatants).concat(...Object.values(placeholders))
+            },
             get currentPhaseIndex() {
                 return this.phases.findIndex(p => p.id === this.currentPhase.id)
             },
@@ -45,12 +56,6 @@ export class CombatPhaseTracker extends CombatTracker {
             },
             get currentSubPhaseIndex() {
                 return this.currentSubPhases.findIndex(p => p.id === this.currentSubPhase.id)
-            },
-            get currentPhaseControls() {
-                if (this.currentSubPhase?.controls) {
-                    return this.currentSubPhase?.controls
-                }
-                return this.currentPhase?.controls ?? []
             },
             getSubPhaseCssClass(subPhaseId) {
                 const subPhase = this.currentSubPhases.find(p => p.id === subPhaseId)
@@ -74,40 +79,60 @@ export class CombatPhaseTracker extends CombatTracker {
                 Hooks.on(`${CANONICAL_NAME}.createPhase`, () => {
                     this.phases = Object.values(combatTrackerPhases.phases)
                 })
-                await this.updateCombatants(combatTracker.viewed.combatants)
+                if (this.currentSubPhase.getCombatants) {
+                    await this.updateCombatants(this.currentSubPhase.getCombatants(combat))
+                } else if (this.currentPhase.getCombatants) {
+                    await this.updateCombatants(this.currentPhase.getCombatants(combat))
+                } else {
+                    await this.updateCombatants(combat.combatants)
+                }
+                console.log('mount', this)
             },
             createPlaceholder(placeholder) {
                 const placeholderId = foundry.utils.randomID()
-                this.placeholders[placeholderId] = placeholder
-            },
-            addCombatantCssClass(combatantId, cssClass) {
-                if (!this.combatantCssClass[combatantId]) {
-                    this.combatantCssClass[combatantId] = {}
+                const newPlaceholder = {
+                    ...placeholder,
+                    id: placeholderId,
+                    type: COMBATANT_TYPE.PLACEHOLDER,
+                    cssClass: ['placeholder', placeholder.cssClass].join(' '),
                 }
-                this.combatantCssClass[combatantId][cssClass] = true
+                this.placeholders[placeholderId] = newPlaceholder
+                return newPlaceholder
             },
-            removeCombatantCssClass(combatantId, cssClass) {
-                if (!this.combatantCssClass[combatantId]) {
-                    this.combatantCssClass[combatantId] = {}
-                }
-                this.combatantCssClass[combatantId][cssClass] = false
+            removePlaceholders() {
+                this.placeholders = {}
             },
-            toggleCombatantCssClass(combatantId, cssClass) {
-                if (!this.combatantCssClass[combatantId]) {
-                    this.combatantCssClass[combatantId] = {}
+            addTurnCssClass(combatantId, cssClass) {
+                if (!this.turnCssClass[combatantId]) {
+                    this.turnCssClass[combatantId] = {}
                 }
-                this.combatantCssClass[combatantId][cssClass] = !this.combatantCssClass[combatantId][cssClass]
+                this.turnCssClass[combatantId][cssClass] = true
+            },
+            removeTurnCssClass(combatantId, cssClass) {
+                if (!this.turnCssClass[combatantId]) {
+                    this.turnCssClass[combatantId] = {}
+                }
+                this.turnCssClass[combatantId][cssClass] = false
+            },
+            toggleTurnCssClass(combatantId, cssClass) {
+                if (!this.turnCssClass[combatantId]) {
+                    this.turnCssClass[combatantId] = {}
+                }
+                this.turnCssClass[combatantId][cssClass] = !this.turnCssClass[combatantId][cssClass]
             },
             async updateCombatants(combatants) {
                 this.combatants = {}
+                console.log('updateCombatants', combatants)
                 for (const combatant of combatants) {
                     const cssClass = {
                         hidden: combatant.hidden,
                         defeated: combatant.defeated,
-                        ...this.combatantCssClass[combatant.id] ?? {}
+                        combatant: true,
+                        ...this.turnCssClass[combatant.id] ?? {}
                     }
                     this.combatants[combatant.id] = {
                         id: combatant.id,
+                        type: COMBATANT_TYPE.COMBATANT,
                         name: combatant.name,
                         owner: combatant.owner,
                         defeated: combatant.defeated,
@@ -128,17 +153,17 @@ export class CombatPhaseTracker extends CombatTracker {
             async getPhaseApi() {
                 const { combat } = await combatTracker.getData()
                 return {
-                    combatants: Object.values(this.combatants),
+                    turns: Object.values(this.turns),
                     createPlaceholder: this.createPlaceholder,
                     combat: combat,
-                    addCombatantCssClass: this.addCombatantCssClass,
-                    removeCombatantCssClass: this.removeCombatantCssClass,
-                    toggleCombatantCssClass: this.toggleCombatantCssClass,
+                    addCombatantCssClass: this.addTurnCssClass,
+                    removeCombatantCssClass: this.removeTurnCssClass,
+                    toggleCombatantCssClass: this.toggleTurnCssClass,
                     phases: combatTrackerPhases,
                 }
             },
             async changePhase(newPhase) {
-                this.placeholders = {}
+                this.removePlaceholders()
                 const phaseApi = await this.getPhaseApi()
                 combatTrackerPhases.call(`deactivatePhase.${this.currentPhase.id}`, phaseApi)
                 this.currentPhase = newPhase
@@ -151,7 +176,7 @@ export class CombatPhaseTracker extends CombatTracker {
                 combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, phaseApi)
             },
             async changeSubPhase(newSubPhase) {
-                this.placeholders = {}
+                this.removePlaceholders()
                 const phaseApi = await this.getPhaseApi()
                 combatTrackerPhases.call(`deactivateSubPhase.${this.currentSubPhase.id}`, phaseApi)
                 if (!newSubPhase) {
@@ -232,6 +257,9 @@ export class CombatPhaseTracker extends CombatTracker {
             },
             scrollToPhase(phaseId) {
                 const phaseElement = document.querySelector(`.phase[data-phase-id="${phaseId}"]`)
+                if (!phaseElement) {
+                    return
+                }
                 phaseElement.scrollIntoView()
             },
         };

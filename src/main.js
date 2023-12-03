@@ -16,8 +16,7 @@ Hooks.on('init', async () => {
     CONFIG.ui.combat = CombatPhaseTracker;
     CONFIG.ui.combat.combatTrackerPhases = api.combatTrackerPhases
     await loadTemplates({
-        combatants: `${TEMPLATE_PATH}/combatants.html`,
-        placeholders: `${TEMPLATE_PATH}/placeholders.html`,
+        turns: `${TEMPLATE_PATH}/turns.html`,
     });
     Hooks.callAll(`${CANONICAL_NAME}.init`, api);
 });
