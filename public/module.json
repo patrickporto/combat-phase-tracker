@@ -21,9 +21,9 @@
             {
                 "id": "petitevue-lib",
                 "type": "module",
-                "manifest": "https://github.com/patrickporto/petitevue-lib/releases/download/11.0.0/module.json",
+                "manifest": "https://github.com/patrickporto/petitevue-lib/releases/download/11.0.1/module.json",
                 "compatibility": {
-                    "verified": "11.0.0"
+                    "verified": "11.0.1"
                 }
             }
         ]
