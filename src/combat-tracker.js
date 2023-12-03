@@ -86,7 +86,6 @@ export class CombatPhaseTracker extends CombatTracker {
                 } else {
                     await this.updateCombatants(combat.combatants)
                 }
-                console.log('mount', this)
             },
             createPlaceholder(placeholder) {
                 const placeholderId = foundry.utils.randomID()
@@ -122,7 +121,6 @@ export class CombatPhaseTracker extends CombatTracker {
             },
             async updateCombatants(combatants) {
                 this.combatants = {}
-                console.log('updateCombatants', combatants)
                 for (const combatant of combatants) {
                     const cssClass = {
                         hidden: combatant.hidden,
@@ -166,6 +164,7 @@ export class CombatPhaseTracker extends CombatTracker {
                 this.removePlaceholders()
                 const phaseApi = await this.getPhaseApi()
                 combatTrackerPhases.call(`deactivatePhase.${this.currentPhase.id}`, phaseApi)
+                Hooks.callAll(`${CANONICAL_NAME}.deactivatePhase`, this.currentPhase, phaseApi)
                 this.currentPhase = newPhase
                 if (newPhase.getCombatants) {
                     await this.updateCombatants(newPhase.getCombatants(combat))
@@ -174,11 +173,13 @@ export class CombatPhaseTracker extends CombatTracker {
                 }
                 this.scrollToPhase(newPhase.id)
                 combatTrackerPhases.call(`activatePhase.${this.currentPhase.id}`, phaseApi)
+                Hooks.callAll(`${CANONICAL_NAME}.activatePhase`, newPhase, phaseApi)
             },
             async changeSubPhase(newSubPhase) {
                 this.removePlaceholders()
                 const phaseApi = await this.getPhaseApi()
                 combatTrackerPhases.call(`deactivateSubPhase.${this.currentSubPhase.id}`, phaseApi)
+                Hooks.callAll(`${CANONICAL_NAME}.deactivateSubPhase`, this.currentSubPhase, phaseApi)
                 if (!newSubPhase) {
                     this.currentSubPhase = {}
                     return
@@ -192,6 +193,7 @@ export class CombatPhaseTracker extends CombatTracker {
                     await this.updateCombatants(combat.combatants)
                 }
                 combatTrackerPhases.call(`activateSubPhase.${this.currentSubPhase.id}`, phaseApi)
+                Hooks.callAll(`${CANONICAL_NAME}.activateSubPhase`, newSubPhase, phaseApi)
             },
             async selectPhase(phaseId) {
                 const selectedPhase = this.phases.find(p => p.id === phaseId)
@@ -269,7 +271,7 @@ export class CombatPhaseTracker extends CombatTracker {
         super.activateListeners(html);
         if (!this._app) {
             const { createApp } = game.modules.get('petitevue-lib').api
-            const scope = await this.createScope()
+            const scope = this.createScope()
             this._app = createApp(scope)
         }
         this._app.mount(".combat-phase-tracker")
