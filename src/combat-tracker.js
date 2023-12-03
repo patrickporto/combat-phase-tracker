@@ -27,7 +27,7 @@ export class CombatPhaseTracker extends CombatTracker {
         if (!canvas.ready) return;
     }
 
-    createScope() {
+    createScope(html) {
         const combatTracker = this
         const combat = combatTracker.viewed
 
@@ -86,6 +86,7 @@ export class CombatPhaseTracker extends CombatTracker {
                 } else {
                     await this.updateCombatants(combat?.combatants ?? [])
                 }
+                Hooks.callAll(`renderCombatTracker`, combatTracker, html, this.user)
             },
             createPlaceholder(placeholder) {
                 const placeholderId = foundry.utils.randomID()
@@ -199,6 +200,7 @@ export class CombatPhaseTracker extends CombatTracker {
                 }
                 combatTrackerPhases.call(`activateSubPhase.${this.currentSubPhase.id}`, phaseApi)
                 Hooks.callAll(`${CANONICAL_NAME}.activateSubPhase`, newSubPhase, phaseApi)
+                Hooks.callAll(`renderCombatTracker`, combatTracker, html, this.user)
             },
             async selectPhase(phaseId) {
                 const selectedPhase = this.phases.find(p => p.id === phaseId)
@@ -282,7 +284,7 @@ export class CombatPhaseTracker extends CombatTracker {
         super.activateListeners(html);
         if (!this._app) {
             const { createApp } = game.modules.get('petitevue-lib').api
-            const scope = this.createScope()
+            const scope = this.createScope(html)
             this._app = createApp(scope)
         }
         this._app.mount(".combat-phase-tracker")
