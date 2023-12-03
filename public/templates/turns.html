@@ -12,6 +12,7 @@
             <a v-if="turn.canPing" class="combatant-control" data-tooltip="COMBAT.PingCombatant" @click="pingCombatant(turn.id)">
                 <i class="fa-solid fa-bullseye-arrow"></i>
             </a>
+            <a class="combatant-control" v-for="control in phase.controls" v-html="control.content" :data-tooltip="localize(control.tooltip)" @click="handleControlClick(control, turn.id)" :class="control.cssClass" @vue:mounted="handleControlMount(control, turn.id)"></a>
         </div>
     </div>
     <div class="token-resource" v-if="turn.hasResource">

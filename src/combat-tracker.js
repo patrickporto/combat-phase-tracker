@@ -149,7 +149,14 @@ export class CombatPhaseTracker extends CombatTracker {
             },
             async handleControlClick(control, combatantId) {
                 const combatant = combat.combatants.get(combatantId)
-                control.onClick({
+                control.onClick && control.onClick({
+                    ...await this.getPhaseApi(),
+                    combatant,
+                })
+            },
+            async handleControlMount(control, combatantId) {
+                const combatant = combat.combatants.get(combatantId)
+                control.onMount && control.onMount({
                     ...await this.getPhaseApi(),
                     combatant,
                 })
@@ -160,9 +167,9 @@ export class CombatPhaseTracker extends CombatTracker {
                     turns: Object.values(this.turns),
                     createPlaceholder: this.createPlaceholder,
                     combat: combat,
-                    addCombatantCssClass: this.addTurnCssClass,
-                    removeCombatantCssClass: this.removeTurnCssClass,
-                    toggleCombatantCssClass: this.toggleTurnCssClass,
+                    addTurnCssClass: this.addTurnCssClass,
+                    removeTurnCssClass: this.removeTurnCssClass,
+                    toggleTurnCssClass: this.toggleTurnCssClass,
                     phases: combatTrackerPhases,
                 }
             },
@@ -275,6 +282,9 @@ export class CombatPhaseTracker extends CombatTracker {
                 phaseElement.scrollIntoView()
             },
             localize(key, ...args) {
+                if (!key) {
+                    return ''
+                }
                 return game.i18n.format(key, args)
             }
         };
