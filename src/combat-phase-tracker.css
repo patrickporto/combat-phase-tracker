@@ -22,3 +22,8 @@
 .phase-combatant-control:hover {
     text-shadow: 0 0 8px var(--color-shadow-primary);
 }
+
+.directory .directory-item.active.has-subphases {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+}

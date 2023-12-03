@@ -31,17 +31,15 @@ export class CombatPhaseTracker extends CombatTracker {
         const combatTracker = this
         const combat = combatTracker.viewed
 
-        const phases = Object.values(combatTrackerPhases.phases)
-
         return {
             $delimiters: ['[[', ']]'],
             user: game.user,
-            currentPhase: phases[0],
+            currentPhase: combatTrackerPhases.initial,
             currentSubPhase: {},
             combatants: {},
             placeholders: {},
             turnCssClass: {},
-            phases: phases,
+            phases: combatTrackerPhases.phases,
             COMBATANT_TYPE,
             get turns() {
                 const combatants = this.combatants
@@ -77,14 +75,14 @@ export class CombatPhaseTracker extends CombatTracker {
                     combatTrackerPhases.removePhasesByScope(PHASE_SCOPE.ROUND)
                 })
                 Hooks.on(`${CANONICAL_NAME}.createPhase`, () => {
-                    this.phases = Object.values(combatTrackerPhases.phases)
+                    this.phases = combatTrackerPhases.phases
                 })
                 if (this.currentSubPhase.getCombatants) {
                     await this.updateCombatants(this.currentSubPhase.getCombatants(combat))
                 } else if (this.currentPhase.getCombatants) {
                     await this.updateCombatants(this.currentPhase.getCombatants(combat))
                 } else {
-                    await this.updateCombatants(combat.combatants)
+                    await this.updateCombatants(combat?.combatants ?? [])
                 }
             },
             createPlaceholder(placeholder) {
@@ -272,6 +270,9 @@ export class CombatPhaseTracker extends CombatTracker {
                 }
                 phaseElement.scrollIntoView()
             },
+            localize(key, ...args) {
+                return game.i18n.format(key, args)
+            }
         };
     }
 

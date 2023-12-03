@@ -61,7 +61,11 @@ class CombatTrackerPhases {
     }
 
     get phases() {
-        return this._phases;
+        return Object.values(this._phases);
+    }
+
+    get initial() {
+        return this.phases[0];
     }
 
     get(id) {
