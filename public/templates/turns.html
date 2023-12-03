@@ -14,5 +14,11 @@
             </a>
         </div>
     </div>
-    <div class="turn-details flexcol" v-html="turn.details" v-if="turn.details"></div>
+    <div class="token-resource" v-if="turn.hasResource">
+        <span class="resource">[[turn.resource]]</span>
+    </div>
+    <div class="token-initiative" v-if="turn.initiative">
+        <span class="initiative" v-if="turn.hasRolled">[[turn.initiative]]</span>
+        <a v-if="turn.owner" class="combatant-control roll" data-tooltip="COMBAT.InitiativeRoll" @click="rollInitiative"></a>
+    </div>
 </li>

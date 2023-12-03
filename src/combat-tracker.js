@@ -128,12 +128,17 @@ export class CombatPhaseTracker extends CombatTracker {
                         combatant: true,
                         ...this.turnCssClass[combatant.id] ?? {}
                     }
+                    const resource = combatant.permission >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER ? combatant.resource : null;
                     this.combatants[combatant.id] = {
                         id: combatant.id,
                         type: COMBATANT_TYPE.COMBATANT,
                         name: combatant.name,
                         owner: combatant.owner,
                         defeated: combatant.defeated,
+                        initiative: combatant.initiative,
+                        hasRolled: combatant.initiative !== null,
+                        hasResource: resource !== null,
+                        resource: resource,
                         img: await combatTracker._getCombatantThumbnail(combatant),
                         hidden: combatant.hidden,
                         canPing: (combatant.sceneId === canvas.scene?.id) && game.user.hasPermission("PING_CANVAS"),
@@ -256,6 +261,9 @@ export class CombatPhaseTracker extends CombatTracker {
             pingCombatant(combatantId) {
                 const combatant = combat.combatants.get(combatantId)
                 combatTracker._onPingCombatant(combatant)
+            },
+            rollInitiative(combatantId) {
+                combatTracker.rollInitiative([combatantId])
             },
             scrollToPhase(phaseId) {
                 const phaseElement = document.querySelector(`.phase[data-phase-id="${phaseId}"]`)
